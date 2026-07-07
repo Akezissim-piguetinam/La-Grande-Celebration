@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Site evenementiel avec possibilite de reservation, de prise de contact et de confirmation de presence. Evenement fictif 2026, Developpement web 2026.">
+    <meta name="keywords" content="Evenement, site evenementiel, bookink, reservation, RSVP">
+    <meta name="author" content="Sandrine Piguetinam (Sandie) Akezissim">
+    <meta property="og:title" content="Site d'evenement fictif ( la grande celebration ) 2026">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="Site d'evenement">
+    <meta property="og:url" content="">
+    <title>La Grande Célébration — Soirée Anniversaire</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">
+  </head>
+  <body>
+ 
+<!-- CANVAS CONFETTIS -->
+    <canvas id="confetti-canvas"></canvas>
+ 
+<!--ADMINISTRATION -->
+    <div class="modal-overlay" id="adminModal">
+      <div class="modal-box">
+        <button class="modal-close" onclick="closeAdmin()">✕</button>
+ 
+    <!-- LOGIN -->
+        <div id="adminLogin">
+          <div class="modal-title">Espace Administrateur</div>
+          <p class="modal-sub">Accès réservé à l'organisateur de l'événement.</p>
+          <input class="admin-input" type="password" id="adminPwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkAdmin()"/>
+          <button class="btn-admin-login" onclick="checkAdmin()">Accéder à la liste →</button>
+          <div class="admin-error" id="adminError">Mot de passe incorrect.</div>
+        </div>
+ 
+    <!-- LISTE INVITÉS -->
+        <div class="guest-list-wrap" id="guestListWrap">
+          <div class="modal-title">Liste des invités</div>
+          <p class="modal-sub" id="guestCount">0 inscription(s)</p>
+          <ul class="guest-list" id="guestListEl"></ul>
+          <button class="admin-export" onclick="exportList()">⬇ Exporter en .txt</button>
+          <button class="btn-logout" onclick="logoutAdmin()">Se déconnecter</button>
+        </div>
+      </div>
+    </div>
+ 
+<!-- NAV -->
+    <nav>
+      <div class="logo">✦ La Grande Célébration</div>
+        <ul class="nav-links">
+          <li><a href="#presentation">Événement</a></li>
+          <li><a href="#programme">Programme</a></li>
+          <li><a href="#artistes">Animateurs</a></li>
+          <li><a href="#reservation">Réservation</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+ 
+<!-- ══ HERO ══ -->
+    <section id="hero">
+      <div class="hero-bg"></div>
+ 
+  <!-- Étoiles générées par JS -->
+      <div id="stars-container" style="position:absolute;inset:0;z-index:0;"></div>
+ 
+      <p class="hero-eyebrow">18 ans de vie, ça se fête !</p>
+ 
+  <!-- GÂTEAU ANIMÉ SVG -->
+      <div class="cake-wrapper">
+        <svg class="cake-svg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Lueur flamme -->
+        <ellipse class="flame-glow" cx="80" cy="55" rx="22" ry="22" fill="#F5C542" opacity="0.18"/>
+      <!-- Flamme -->
+        <g class="flame-group">
+          <path d="M80 18 C74 28 70 34 72 42 C74 50 88 50 88 42 C90 34 86 28 80 18Z" fill="url(#flameGrad)"/>
+          <path d="M80 28 C77 34 76 38 78 43 C80 47 84 45 84 42 C86 38 82 34 80 28Z" fill="#FFF3CD" opacity="0.7"/>
+        </g>
+      <!-- Mèche -->
+        <rect x="79" y="52" width="2" height="8" rx="1" fill="#8B6914"/>
+      <!-- Bougie -->
+        <rect x="72" y="60" width="16" height="36" rx="4" fill="url(#candleGrad)"/>
+        <ellipse cx="80" cy="60" rx="8" ry="3" fill="#E8D5FF"/>
+      <!-- Étage supérieur -->
+        <ellipse cx="80" cy="98" rx="30" ry="7" fill="#7C3AED" opacity="0.6"/>
+        <rect x="50" y="98" width="60" height="32" fill="url(#layer1Grad)"/>
+        <ellipse cx="80" cy="130" rx="30" ry="7" fill="#5B21B6"/>
+      <!-- Déco étage sup -->
+        <circle cx="65" cy="112" r="3" fill="#F5C542" opacity="0.8"/>
+        <circle cx="80" cy="108" r="3" fill="#C4B5FD" opacity="0.9"/>
+        <circle cx="95" cy="112" r="3" fill="#F5C542" opacity="0.8"/>
+      <!-- Glaçage coulant -->
+        <path d="M50 100 Q45 110 48 118 L50 130 L52 118 Q50 108 55 100Z" fill="white" opacity="0.3"/>
+        <path d="M108 100 Q115 110 112 118 L110 130 L108 118 Q110 108 105 100Z" fill="white" opacity="0.3"/>
+      <!-- Étage inférieur -->
+        <ellipse cx="80" cy="132" rx="42" ry="8" fill="#4C1D95" opacity="0.6"/>
+        <rect x="38" y="132" width="84" height="40" fill="url(#layer2Grad)"/>
+        <ellipse cx="80" cy="172" rx="42" ry="8" fill="#3730A3"/>
+      <!-- Déco étage inf -->
+        <circle cx="58" cy="150" r="4" fill="#F5C542" opacity="0.8"/>
+        <circle cx="72" cy="145" r="3" fill="#C4B5FD"/>
+        <circle cx="88" cy="145" r="3" fill="#C4B5FD"/>
+        <circle cx="102" cy="150" r="4" fill="#F5C542" opacity="0.8"/>
+      <!-- Glaçage coulant bas -->
+        <path d="M38 134 Q32 148 35 158 L38 172 L41 158 Q38 145 44 134Z" fill="white" opacity="0.25"/>
+        <path d="M122 134 Q130 148 127 158 L122 172 L120 158 Q123 145 118 134Z" fill="white" opacity="0.25"/>
+      <!-- Assiette / socle -->
+        <ellipse cx="80" cy="174" rx="50" ry="10" fill="#2D1B69"/>
+        <ellipse cx="80" cy="172" rx="46" ry="7" fill="#3730A3" opacity="0.6"/>
+      <!-- Gradients -->
+        <defs>
+          <radialGradient id="flameGrad" cx="50%" cy="80%" r="60%">
+            <stop offset="0%" stop-color="#FFF176"/>
+            <stop offset="50%" stop-color="#FFB300"/>
+            <stop offset="100%" stop-color="#E65100"/>
+          </radialGradient>
+          <linearGradient id="candleGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#DDD6FE"/>
+            <stop offset="50%" stop-color="#EDE9FE"/>
+            <stop offset="100%" stop-color="#C4B5FD"/>
+          </linearGradient>
+          <linearGradient id="layer1Grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#7C3AED"/>
+            <stop offset="100%" stop-color="#5B21B6"/>
+          </linearGradient>
+          <linearGradient id="layer2Grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4C1D95"/>
+            <stop offset="100%" stop-color="#3730A3"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+ 
+    <h1 class="hero-title">La Grande<br/>Célébration</h1>
+    <p class="hero-sub">Une nuit d'anniversaire mémorable, entre musique, émotions et moments précieux avec ceux que vous aimez.</p>
+    <div class="hero-badge">
+    <i class="fa-solid fa-calendar" style="color: blue; font-size: 18px;"></i> <span>Samedi 04 Juillet 2026</span>
+    &nbsp;·&nbsp;
+    <i class="fa-solid fa-clock" style="color: white; font-size: 18px;"></i> <span>19h00 — 02h00</span>
+  </div>
+  <a href="#reservation" class="btn-hero">Je serai là ✦</a>
+</section>
+ 
+<!-- ══ PRÉSENTATION ══ -->
+<section id="presentation">
+  <div class="pres-grid">
+    <div class="pres-text">
+      <p class="section-eyebrow">L'événement</p>
+      <h2 class="section-title">Une soirée <em>hors du commun</em></h2>
+      <div class="gold-line"></div>
+      <p>Bienvenue à la soirée d'anniversaire de l'année — une célébration grandiose pensée dans les moindres détails dans le but de partager vivement notre joie en ce grand jour !</p>
+      <p>Musique live, animations époustouflantes, gastronomie raffinée et ambiance : tout est réuni pour que cette nuit reste à jamais gravée dans nos mémoires à tous.</p>
+      <p>Rejoignez-nous pour partager cet instant si important pour nous et célébrer ensemble dans la joie et la bonne humeur.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-cell">
+        <div class="stat-num">100+</div>
+        <div class="stat-lbl">Invités attendus</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">7h</div>
+        <div class="stat-lbl">De festivités</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">5+</div>
+        <div class="stat-lbl">Animateurs</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">1</div>
+        <div class="stat-lbl">Nuit magique</div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ══ PROGRAMME ══ -->
+<section id="programme">
+  <div style="text-align:center;margin-bottom:3.5rem;">
+    <p class="section-eyebrow">Le déroulé</p>
+    <h2 class="section-title">Programme <em>de la nuit</em></h2>
+    <div class="gold-line" style="margin:0 auto;"></div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-item">
+      <div class="prog-time">19h00</div>
+      <div class="prog-line-wrap"><div class="prog-dot"></div><div class="prog-connector"></div></div>
+      <div class="prog-content"><h3>Accueil des invités</h3><p>Cocktail de bienvenue, découverte des espaces et rencontres dans une ambiance tamisée.</p></div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">20h00</div>
+      <div class="prog-line-wrap"><div class="prog-dot"></div><div class="prog-connector"></div></div>
+      <div class="prog-content"><h3>Dîner de gala</h3><p>Repas gastronomique servi à table, dans une ambiance lumineuse et feutrée.</p></div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">21h30</div>
+      <div class="prog-line-wrap"><div class="prog-dot"></div><div class="prog-connector"></div></div>
+      <div class="prog-content"><h3>Show surprise & discours</h3><p>Révélation du gâteau, discours des proches et animation spéciale de la soirée.</p></div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">22h00</div>
+      <div class="prog-line-wrap"><div class="prog-dot"></div><div class="prog-connector"></div></div>
+      <div class="prog-content"><h3>Concert live & DJ Set</h3><p>La piste de danse s'ouvre ! Musique live suivie d'un DJ set endiablé toute la nuit.</p></div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-time">01h00</div>
+      <div class="prog-line-wrap"><div class="prog-dot"></div><div class="prog-connector"></div></div>
+      <div class="prog-content"><h3>Distribution d'objets et repas à emporter & clôture</h3><p>Finale spectaculaire pour clore cette nuit inoubliable sous un ciel étoilé.</p></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ══ ARTISTES ══ -->
+<section id="artistes">
+  <div style="text-align:center;margin-bottom:3.5rem;">
+    <p class="section-eyebrow">Sur scène</p>
+    <h2 class="section-title">Animateurs <em>& Artistes</em></h2>
+    <div class="gold-line" style="margin:0 auto;"></div>
+  </div>
+  <div class="artistes-grid">
+    <div class="artiste-card">
+      <div class="artiste-icon"><i class="fa-solid fa-microphone" style="color:;font-size: 18px;"></i></div>
+      <h3>Santrinos Raphaêl</h3>
+      <p>Auteur, Chanteur & Compositeur · Afrobeats & Dancehall</p>
+    </div>
+    <div class="artiste-card">
+      <div class="artiste-icon"><i class="fa-solid fa-guitar" style="color:orange;font-size: 24px;"></i></div>
+      <h3>Groupe 4</h3>
+      <p>Live Band · Soul & R&B</p>
+    </div>
+    <div class="artiste-card">
+      <div class="artiste-icon"><i class="fa-solid fa-mask" style="color:;font-size: 24px;"></i></div>
+      <h3>Abawé</h3>
+      <p>Animateur · Humour & Jeux</p>
+    </div>
+    <div class="artiste-card">
+      <div class="artiste-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <h3>Maître Elias</h3>
+      <p>Magicien · Spectacle close-up</p>
+    </div>
+  </div>
+</section>
+ 
+<!-- ══ RÉSERVATION ══ -->
+<section id="reservation">
+  <div class="resa-inner">
+    <p class="section-eyebrow" style="text-align:center;">Confirmez votre présence</p>
+    <h2 class="section-title" style="text-align:center;">Je serai <em>là !</em></h2>
+    <div class="gold-line" style="margin:0 auto;"></div>
+ 
+    <div class="resa-card">
+      <input class="resa-input" type="text" id="guestInput" placeholder="Entrez votre prénom et nom…" maxlength="80"/>
+      <button class="btn-resa" onclick="registerGuest()">✦ Je serai là ✦</button>
+      <div class="resa-confirm" id="resaConfirm"></div>
+      <div class="resa-count">Déjà <span id="guestCountDisplay">0</span> personne(s) inscrite(s)</div>
+    </div>
+ 
+    <button class="admin-btn" onclick="openAdmin()">⚙ Accès administrateur</button>
+  </div>
+</section>
+ 
+<!-- ══ CONTACT ══ -->
+<section id="contact">
+  <div class="contact-grid">
+    <div class="contact-info">
+      <p class="section-eyebrow">Nous rejoindre</p>
+      <h2 class="section-title">Contact & <em>Localisation</em></h2>
+      <div class="gold-line"></div>
+      <p>Des questions sur l'événement ? Notre équipe est disponible pour vous aider à organiser votre venue et répondre à toutes vos demandes.</p>
+      <div class="c-detail"><div class="c-icon"><i class="fa-solid fa-location-dot" style="color:;font-size: 18px;"></i></div><div><strong>Place de Loisirs Cité Abel</strong><br/><span style="font-size:0.8rem;color:var(--gris);">Togo - Lomé, Adétikopé</span></div></div>
+      <div class="c-detail"><div class="c-icon"><i class="fa-solid fa-phone" style="color:;font-size: 18px;"></i></div><div>+228 99 54 65 08</div></div>
+      <div class="c-detail"><div class="c-icon"><i class="fa-solid fa-envelope" style="color:;font-size: 18px;"></i></div><div>akezissimpiguetinam@gmail.com</div></div>
+      <div class="c-detail"><div class="c-icon"><i class="fa-solid fa-clock" style="font-size: 18px;"></i></div><div>Samedi 20 Sept. · 19h00 – 02h00</div></div>
+    </div>
+    <div>
+      <div class="contact-form">
+        <input type="text" placeholder="Votre prénom et nom"/>
+        <input type="email" placeholder="Votre adresse e-mail"/>
+        <input type="text" placeholder="Objet de votre message"/>
+        <textarea placeholder="Votre message…"></textarea>
+        <button class="btn-contact">Envoyer le message ✦</button>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <p><strong>✦ La Grande Célébration</strong> — Soirée Anniversaire 2026</p>
+  <p style="margin-top:0.4rem;">Créé avec passion par <strong>Sandie AKEZISSIM</strong> · HTIB ATLANTIS</p>
+</footer>
+ 
+<script>
+/* ══════════════════════════════
+   ÉTOILES
+══════════════════════════════ */
+const starsEl = document.getElementById('stars-container');
+for(let i=0;i<80;i++){
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random()*2.5+0.5;
+  s.style.cssText = `
+    width:${size}px;height:${size}px;
+    left:${Math.random()*100}%;top:${Math.random()*100}%;
+    animation-duration:${Math.random()*4+2}s;
+    animation-delay:${Math.random()*5}s;
+  `;
+  starsEl.appendChild(s);
+}
+ 
+/* ══════════════════════════════
+   CONFETTIS
+══════════════════════════════ */
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+let confettis = [];
+let animRunning = false;
+ 
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+ 
+function createConfetti(){
+  const colors = ['#7C3AED','#3B82F6','#C4B5FD','#F5C542','#FFFFFF','#EC4899','#A78BFA'];
+  confettis = [];
+  for(let i=0;i<180;i++){
+    confettis.push({
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*300,
+      w: Math.random()*10+4,
+      h: Math.random()*6+3,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      angle: Math.random()*Math.PI*2,
+      spin: (Math.random()-0.5)*0.15,
+      vx: (Math.random()-0.5)*3,
+      vy: Math.random()*4+2,
+      opacity: 1,
+      life: 1
+    });
+  }
+}
+ 
+function drawConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  let alive = false;
+  confettis.forEach(c=>{
+    if(c.y > canvas.height+20) return;
+    alive = true;
+    c.x += c.vx; c.y += c.vy;
+    c.angle += c.spin;
+    c.life -= 0.004;
+    ctx.save();
+    ctx.translate(c.x,c.y);
+    ctx.rotate(c.angle);
+    ctx.globalAlpha = Math.max(0, c.life);
+    ctx.fillStyle = c.color;
+    ctx.fillRect(-c.w/2,-c.h/2,c.w,c.h);
+    ctx.restore();
+  });
+  if(alive) requestAnimationFrame(drawConfetti);
+  else { ctx.clearRect(0,0,canvas.width,canvas.height); animRunning=false; }
+}
+ 
+function launchConfetti(){
+  if(animRunning) return;
+  animRunning = true;
+  createConfetti();
+  drawConfetti();
+}
+ 
+/* ══════════════════════════════
+   RÉSERVATION
+══════════════════════════════ */
+const ADMIN_PASSWORD = 'sandrine2026';
+let guests = JSON.parse(localStorage.getItem('guests') || '[]');
+ 
+function updateCount(){
+  document.getElementById('guestCountDisplay').textContent = guests.length;
+}
+updateCount();
+ 
+function registerGuest(){
+  const input = document.getElementById('guestInput');
+  const name = input.value.trim();
+  if(!name){ input.style.borderColor='#f87171'; setTimeout(()=>input.style.borderColor='',1200); return; }
+ 
+  // Vérifier doublon
+  const already = guests.find(g=>g.name.toLowerCase()===name.toLowerCase());
+  const confirm = document.getElementById('resaConfirm');
+  if(already){
+    confirm.style.display='block';
+    confirm.innerHTML = `✦ <em>${name}</em>, vous êtes déjà inscrit(e) ! À très bientôt. 🎉`;
+    return;
+  }
+ 
+  const now = new Date();
+  const timeStr = now.toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  guests.push({ name, time: timeStr });
+  localStorage.setItem('guests', JSON.stringify(guests));
+ 
+  input.value = '';
+  updateCount();
+  confirm.style.display = 'block';
+  confirm.innerHTML = `🎉 Merci <em>${name}</em> ! Votre présence est confirmée.<br/>Nous avons hâte de vous accueillir le 20 septembre. ✦`;
+ 
+  launchConfetti();
+  setTimeout(()=>{ confirm.style.display='none'; }, 5000);
+}
+ 
+document.getElementById('guestInput').addEventListener('keydown', e=>{ if(e.key==='Enter') registerGuest(); });
+ 
+/* ══════════════════════════════
+   ADMIN
+══════════════════════════════ */
+function openAdmin(){
+  document.getElementById('adminModal').classList.add('open');
+  document.getElementById('adminLogin').style.display='block';
+  document.getElementById('guestListWrap').classList.remove('show');
+  document.getElementById('adminPwd').value='';
+  document.getElementById('adminError').style.display='none';
+}
+function closeAdmin(){
+  document.getElementById('adminModal').classList.remove('open');
+}
+document.getElementById('adminModal').addEventListener('click',function(e){
+  if(e.target===this) closeAdmin();
+});
+ 
+function checkAdmin(){
+  const pwd = document.getElementById('adminPwd').value;
+  if(pwd === ADMIN_PASSWORD){
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('guestListWrap').classList.add('show');
+    renderGuestList();
+  } else {
+    document.getElementById('adminError').style.display='block';
+  }
+}
+ 
+function renderGuestList(){
+  guests = JSON.parse(localStorage.getItem('guests') || '[]');
+  const ul = document.getElementById('guestListEl');
+  const cnt = document.getElementById('guestCount');
+  cnt.textContent = guests.length + ' inscription(s)';
+  ul.innerHTML = '';
+  if(guests.length===0){
+    ul.innerHTML='<li style="color:var(--gris);font-size:0.85rem;padding:1rem 0;">Aucune inscription pour le moment.</li>';
+    return;
+  }
+  guests.forEach((g,i)=>{
+    const li = document.createElement('li');
+    li.innerHTML=`<span class="guest-num">${String(i+1).padStart(2,'0')}</span><span class="guest-name">${g.name}</span><span class="guest-time">${g.time}</span>`;
+    ul.appendChild(li);
+  });
+}
+ 
+function logoutAdmin(){
+  document.getElementById('guestListWrap').classList.remove('show');
+  document.getElementById('adminLogin').style.display='block';
+  document.getElementById('adminPwd').value='';
+  document.getElementById('adminError').style.display='none';
+}
+ 
+function exportList(){
+  guests = JSON.parse(localStorage.getItem('guests') || '[]');
+  let txt = '=== LISTE DES INVITÉS — La Grande Célébration 2025 ===\n\n';
+  guests.forEach((g,i)=>{ txt+=`${String(i+1).padStart(2,'0')}. ${g.name}  [${g.time}]\n`; });
+  txt+=`\nTotal : ${guests.length} invité(s)`;
+  const blob = new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'liste_invites.txt';
+  a.click();
+}
+</script>
+</body>
+</html>
