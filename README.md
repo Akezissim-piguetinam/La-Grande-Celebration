@@ -1,6 +1,9 @@
-Description du proje
+Description du projet
+
 Type de fichier : Page HTML unique (HTML5 / CSS3 / JavaScript vanilla)
+
 Thème visuel : Bleu nuit & Violet — Style élégant Playfair Display
+
 Événement : Soirée anniversaire fictive — La Grande Célébration
 
 1.Navigation fixe — Barre de navigation avec logo et liens vers toutes les sections
